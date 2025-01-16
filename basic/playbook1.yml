@@ -21,9 +21,10 @@
         path: /tmp/oui/non/
         state: directory
         mode: 0777
+        recurse: yes
     - name: "copy a file"
       copy:
-        src: /ansfile/groupe1/oui.txt
+        src: /ansfile/groupe1/test/oui.txt
         dest: /tmp/oui/non/
         mode: 0777
         force: True
