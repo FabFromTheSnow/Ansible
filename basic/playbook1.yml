@@ -21,10 +21,17 @@
         path: /tmp/oui/non/
         state: directory
         mode: 0777
-    - name: "copy a conf file"
+    - name: "copy a file"
       copy:
         src: /ansfile/groupe1/oui.txt
-        dest: /tmp/oui/non/oui.txt
+        dest: /tmp/oui/non/
+        mode: 0777
+        force: True
+      tags: copy
+    - name: "copy folders"
+      copy:
+        src: /ansfile/
+        dest: /tmp/oui/non/
         mode: 0777
         force: True
       tags: copy
