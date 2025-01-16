@@ -1,0 +1,15 @@
+all:
+  children:
+    groupe1:
+      hosts:
+        client:
+    groupe2:
+      hosts:
+        client2:
+    oui:
+      children:
+        groupe1:
+        groupe2:
+    allo:
+      hosts:
+        world:
