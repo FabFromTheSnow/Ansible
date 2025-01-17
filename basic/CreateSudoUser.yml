@@ -1,0 +1,44 @@
+#This playbook configure a user with sudo privileges and adds sshkeys on all target machine
+# Configure following varible in host var
+#usernew: "replaceByUsername"
+#random_password: "{{ lookup('pipe', 'makepasswd --chars=150 | openssl passwd -6 -stdin') }}"
+---
+- name: sudo user with my ssh keys 
+  hosts: groupe1, groupe2
+  tasks:
+    - name: "add user"
+      become: yes
+      user:
+        name: "{{ usernew }}"
+        state: present
+        groups: "sudo"
+        force: True
+        shell: /bin/bash
+        password: "{{ random_password }}"
+      tags: usercreation
+
+    - name: "add .ssh folder"  
+      become: yes
+      file:
+        path: "/home/{{usernew}}/.ssh/"
+        state: directory
+        owner: "{{usernew}}"
+        recurse: true
+        mode: 700
+
+    - name: "add authorized keys"  
+      become: yes
+      file:
+        path: "/home/{{usernew}}/.ssh/authorized_keys"
+        state: touch
+        owner: "{{usernew}}"
+        mode: 0600        
+      tags: add_authorized_file
+
+    - name: "add keys to user"
+      become: yes
+      ansible.posix.authorized_key:
+        key: "REPALCE BY SSH PUB KEY"
+        state: present
+        user: "{{ usernew }}"
+      tags: allowkey
