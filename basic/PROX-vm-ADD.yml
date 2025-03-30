@@ -1,0 +1,62 @@
+#create vm from template on proxmox
+- name: vm
+  hosts: hyperv
+  gather_facts: no
+
+  tasks:
+    - name: check firewall status
+      community.general.proxmox:
+        vmid: "101"
+        state: started
+        api_host: "{{ api_host }}"
+        api_user: "{{ api_user }}"
+        api_password: "{{ api_password }}"
+        validate_certs: "{{ validate_certs}}" # Set to yes if using valid SSL certificates
+      register: result
+
+    - name: Print result
+      debug:
+        var: result
+
+    - name: create vm
+      community.general.proxmox_kvm:
+        clone: "debian-template"
+        name: "debian-1-Iscasi"
+        memory: 2048
+        api_host: "{{ api_host }}"
+        api_user: "{{ api_user }}"
+        api_password: "{{ api_password }}"
+        validate_certs: "{{ validate_certs}}"
+        state: "absent"
+        node: "TestProxmox"
+
+    - name: update vm
+      community.general.proxmox_kvm:
+        name: "debian-1-Iscasi"
+        node: "TestProxmox"
+        memory: 2048
+        cores: 2
+        update: yes
+        api_host: "{{ api_host }}"
+        api_user: "{{ api_user }}"
+        api_password: "{{ api_password }}"
+        state: "started"
+
+    - name: get vm info
+      community.general.proxmox_kvm:
+        name: "debian-1-Iscasi"
+        node: "TestProxmox"
+        api_host: "{{ api_host }}"
+        api_user: "{{ api_user }}"
+        api_password: "{{ api_password }}"
+        validate_certs: "{{ validate_certs}}"
+        state: "started"
+      register: vm_info
+
+    - name: Print VM info
+      debug:
+        var: vm_info
+
+    - name: Print VM info JSON
+      debug:
+        msg: "{{ vm_info | to_nice_json }}"u
